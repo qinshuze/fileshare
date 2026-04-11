@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P 文件共享</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📁 P2P 文件共享</h1>
+            <p class="subtitle">去中心化 · 点对点传输 · 扫码即连</p>
+        </header>
+
+        <div id="status" class="status-bar">
+            <span class="status-icon"></span>
+            <span class="status-text">初始化中...</span>
+        </div>
+
+        <main>
+            <!-- 等待连接 -->
+            <div id="waiting-panel" class="panel">
+                <div class="card center">
+                    <h3>📱 手机扫码自动连接</h3>
+                    <canvas id="qrcode"></canvas>
+                    <p id="room-display" class="room-code"></p>
+                    <p class="hint">对方扫码后将自动完成连接</p>
+                    <button class="btn btn-secondary" id="reset-btn">重置连接</button>
+                </div>
+            </div>
+
+            <!-- 已连接 -->
+            <div id="transfer-panel" class="panel hidden">
+                <div class="connection-info">
+                    <span>✅ 已建立直连通道</span>
+                    <button class="btn btn-small btn-danger" id="disconnect-btn">断开</button>
+                </div>
+
+                <div class="transfer-area">
+                    <div id="drop-zone" class="drop-zone">
+                        <p>📤 拖拽文件到此处</p>
+                        <p>或</p>
+                        <label class="btn btn-primary">
+                            选择文件
+                            <input type="file" id="file-input" multiple hidden>
+                        </label>
+                    </div>
+                    <div id="file-list" class="file-list"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>🔒 文件通过 WebRTC 直传，信令仅用于握手，不经过任何服务器</p>
+        </footer>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
