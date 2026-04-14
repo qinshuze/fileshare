@@ -141,7 +141,7 @@ function createHostRoom() {
             host: "119.29.37.11",
             port: 9000,
             path: "/myapp",
-            secure: false,
+            secure: true,
         });
 
     peer.on('open', (id) => {
@@ -176,7 +176,7 @@ function connectToHost(roomId) {
             host: "119.29.37.11",
             port: 9000,
             path: "/myapp",
-            secure: false,
+            secure: true,
         });
 
     peer.on('open', () => {
