@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P 文件共享</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+<body>
+    <div>
+        连接码：<span id="peer-id"></span>
+    </div>
+    <div>
+        <input type="text" id="dest-peer-id" placeholder="输入目标 peer ID">
+        <button onclick="connect()">连接</button>
+    </div>
+    <div>
+        <input type="file" id="file-input">
+        <button onclick="sendFile()">发送文件</button>
+    </div>
+    <script>
+        var peer = new Peer({
+            host: "119.29.37.11",
+            port: 9000,
+            path: "/myapp",
+            secure: false, // Use true with HTTPS
+        });
+        peer.on("open", function (id) {
+            console.log("My peer ID is: " + id);
+            document.getElementById("peer-id").textContent = id;
+        });
+        peer.on('connection', function(conn) {
+            console.log("连接成功");
+            conn.on('data', function(data) {
+                if (typeof data === 'string') {
+                    try {
+                        var fileInfo = JSON.parse(data);
+                        console.log('接收到文件信息', fileInfo);
+                    } catch (e) {
+                        console.log('接收到文本数据', data);
+                    }
+                } else {
+                    console.log('接收到文件数据', data);
+                }
+            });
+        });
+
+        var conn = null;
+        function connect() {
+            var destId = document.getElementById("dest-peer-id").value;
+            conn = peer.connect(destId, {reliable: true, serialization: 'raw'});
+            conn.on('open', function() {
+                console.log("连接成功");
+            });
+        }
+
+        function sendFile() {
+            var fileInput = document.getElementById("file-input");
+            if (fileInput.files.length > 0 && conn) {
+                var file = fileInput.files[0];
+                // 切片发送文件
+                var chunkSize = 1024 * 1024; // 1MB
+                var offset = 0;
+                function sendChunk() {
+                    var chunk = file.slice(offset, offset + chunkSize);
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        conn.send(e.target.result);
+                        offset += chunkSize;
+                        if (offset < file.size) {
+                            sendChunk();
+                        } else {
+                            console.log('文件发送完成');
+                        }
+                    };
+                    reader.readAsArrayBuffer(chunk);
+                }
+                // sendChunk();
+                conn.send(JSON.stringify({name: file.name}))
+                conn.send(file.slice(0, 262144))
+            }
+        }
+
+    </script>
+</body>
+</html>

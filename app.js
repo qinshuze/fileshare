@@ -137,9 +137,11 @@ function createHostRoom() {
     // 使用 PeerJS 公共信令服务器（免费，仅用于握手）
     const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
     
-    peer = new Peer(roomId, {
-        debug: 0
-    });
+    peer = new Peer({
+            host: "119.29.37.11",
+            port: 9000,
+            path: "/myapp"
+        });
 
     peer.on('open', (id) => {
         console.log('房间已创建:', id);
@@ -170,8 +172,10 @@ function connectToHost(roomId) {
     updateStatus('connecting', '正在连接...');
     
     peer = new Peer({
-        debug: 0
-    });
+            host: "119.29.37.11",
+            port: 9000,
+            path: "/myapp"
+        });
 
     peer.on('open', () => {
         console.log('已就绪，发起连接:', roomId);
