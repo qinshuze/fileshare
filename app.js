@@ -138,11 +138,8 @@ function createHostRoom() {
     const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
     
     peer = new Peer({
-            host: "119.29.37.11",
-            port: 9000,
-            path: "/myapp",
-            secure: true,
-        });
+        debug: 0
+    });
 
     peer.on('open', (id) => {
         console.log('房间已创建:', id);
@@ -173,11 +170,8 @@ function connectToHost(roomId) {
     updateStatus('connecting', '正在连接...');
     
     peer = new Peer({
-            host: "119.29.37.11",
-            port: 9000,
-            path: "/myapp",
-            secure: true,
-        });
+        debug: 0
+    });
 
     peer.on('open', () => {
         console.log('已就绪，发起连接:', roomId);
